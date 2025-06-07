@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最終決戦：1週間スプリントToDoリスト</title>
+    <style>
+        /* --- Reset & Base --- */
+        :root {
+            --bg-color: #1a1a1d;
+            --card-bg-color: #2c2c34;
+            --primary-text-color: #f0f0f0;
+            --secondary-text-color: #a9a9b3;
+            --accent-color: #4a90e2;
+            --border-color: #44444c;
+            --completed-color: #6a6a72;
+            --header-font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            --body-font-family: 'Inter', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font-family);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        /* --- Layout & Typography --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: var(--header-font-family);
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+        }
+
+        .day-section {
+            background-color: var(--card-bg-color);
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .day-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .day-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .day-header h2 {
+            font-family: var(--header-font-family);
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .day-header p {
+            color: var(--secondary-text-color);
+            font-size: 1rem;
+        }
+
+        /* --- Table Styling --- */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .task-table th, .task-table td {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .task-table thead th {
+            color: var(--secondary-text-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom-width: 2px;
+        }
+        
+        .task-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* --- Interactive Elements --- */
+        .task-table td a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+
+        .task-table td a:hover {
+            color: #7bb4f0;
+            text-decoration: underline;
+        }
+        
+        .task-table td a:not(:last-child) {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-table td kbd {
+            background-color: var(--bg-color);
+            border-radius: 4px;
+            padding: 0.2em 0.4em;
+            font-family: monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        .task-checkbox {
+            cursor: pointer;
+            width: 1.3em;
+            height: 1.3em;
+            accent-color: var(--accent-color);
+        }
+
+        /* --- Completed State --- */
+        .task-row.completed td {
+            color: var(--completed-color);
+            transition: color 0.5s ease;
+        }
+
+        .task-row.completed .task-desc {
+            text-decoration: line-through;
+            text-decoration-color: var(--completed-color);
+        }
+        
+        .task-row.completed td a {
+            color: var(--completed-color);
+            pointer-events: none;
+        }
+
+        /* --- Column Widths --- */
+        .col-check { width: 5%; }
+        .col-task { width: 25%; }
+        .col-artefact { width: 30%; }
+        .col-ref { width: 40%; }
+        /* AI活用法はレスポンシブで非表示にするので幅指定なし */
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .col-ai {
+                display: none;
+            }
+            .task-table th:nth-child(5) {
+                display: none;
+            }
+            
+            .col-task { width: 30%; }
+            .col-artefact { width: 30%; }
+            .col-ref { width: 35%; }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            h1 { font-size: 2rem; }
+            .day-section { padding: 1rem 1.2rem; }
+            .day-header h2 { font-size: 1.5rem; }
+
+            .task-table { display: block; width: 100%; }
+            .task-table thead { display: none; }
+            .task-table tbody, .task-table tr, .task-table td { display: block; width: 100%; }
+            
+            .task-table tr {
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid var(--border-color);
+            }
+            
+            .task-table tr:last-child {
+                border-bottom: none;
+            }
+            
+            .task-table td {
+                padding: 0.5rem 0;
+                border: none;
+                display: flex;
+                align-items: flex-start;
+            }
+            
+            .task-table td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                width: 100px;
+                min-width: 100px;
+                color: var(--secondary-text-color);
+                margin-right: 1rem;
+            }
+
+            .task-table .col-check-td {
+                display: block;
+                padding-bottom: 1rem;
+            }
+
+            .task-table .col-check-td:before {
+                display: none;
+            }
+
+            .task-checkbox {
+                width: 1.5em;
+                height: 1.5em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>最終決戦：1週間スプリントToDoリスト</h1>
+
+        <section class="day-section">
+            <div class="day-header">
+                <h2>Day 1 (土): 環境構築とバックエンドの心臓部を作る</h2>
+                <p>ゴール: DockerでSpring BootとPostgreSQLを立ち上げ、APIの骨格を完成させる。</p>
+            </div>
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th class="col-check">Done</th>
+                        <th class="col-task">タスク</th>
+                        <th class="col-artefact">成果物 / キーワード</th>
+                        <th class="col-ref">参考資料</th>
+                        <th class="col-ai">AI活用法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-1"></td>
+                        <td class="task-desc" data-label="タスク"><b>プロジェクト作成</b>: Spring Boot (Web, JPA, Lombok, PostgreSQL Driver)</td>
+                        <td data-label="成果物">Spring Bootプロジェクトフォルダ</td>
+                        <td data-label="参考資料">
+                            <a href="https://start.spring.io/" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Initializr</a><br>
+                            <a href="https://www.bold.ne.jp/engineer-blog/spring-boot-2" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot入門</a><br>
+                            <a href="https://spring.io/guides/gs/spring-boot/" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Building an Application with Spring Boot</a>
+                        </td>
+                        <td data-label="AI活用法">-</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-2"></td>
+                        <td class="task-desc" data-label="タスク"><b>Docker環境構築</b>: <kbd>Dockerfile</kbd>と<kbd>docker-compose.yml</kbd>を作成</td>
+                        <td data-label="成果物"><kbd>Dockerfile</kbd>, <kbd>docker-compose.yml</kbd></td>
+                        <td data-label="参考資料">
+                            <a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="noopener noreferrer"><b>公式</b> Dockerfile reference</a><br>
+                            <a href="https://zenn.dev/kazuki_tam/articles/2ac2696020ce8c" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot + PostgreSQLをDockerで</a><br>
+                            <a href="https://www.baeldung.com/spring-boot-postgresql-docker" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot with PostgreSQL and Docker Compose</a>
+                        </td>
+                        <td data-label="AI活用法">「Spring Boot + PostgreSQLを<kbd>docker-compose</kbd>で動かす最小構成の<kbd>Dockerfile</kbd>と<kbd>yml</kbd>ファイルを教えて」</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-3"></td>
+                        <td class="task-desc" data-label="タスク"><b>コンテナ起動確認</b>: <kbd>docker-compose up</kbd>で両方のコンテナがエラーなく起動する</td>
+                        <td data-label="成果物">起動したDockerコンテナ</td>
+                        <td data-label="参考資料">
+                             <a href="https://docs.docker.com/compose/reference/up/" target="_blank" rel="noopener noreferrer"><b>公式</b> docker-compose up</a><br>
+                             <a href="https://qiita.com/yuta_sasaki/items/934a4d2d4a2754e380bd" target="_blank" rel="noopener noreferrer"><b>記事</b> docker-composeコマンド一覧</a>
+                        </td>
+                        <td data-label="AI活用法">-</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-4"></td>
+                        <td class="task-desc" data-label="タスク"><b>API骨格実装</b>: <kbd>QuizController</kbd>に<kbd>GET /api/v1/quizzes</kbd>を作成し、固定の文字列を返す</td>
+                        <td data-label="成果物"><kbd>curl</kbd>で文字列が返ってくるAPI</td>
+                        <td data-label="参考資料">
+                             <a href="https://spring.io/guides/gs/rest-service/" target="_blank" rel="noopener noreferrer"><b>公式</b> Building a RESTful Web Service</a><br>
+                             <a href="https://www.digitalocean.com/community/tutorials/spring-boot-rest-controller-beans-and-components-ja" target="_blank" rel="noopener noreferrer"><b>記事</b> RestControllerでHello World</a><br>
+                             <a href="https://www.baeldung.com/spring-new-requestmapping-shortcuts" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring @RestController Example</a>
+                        </td>
+                        <td data-label="AI活用法">「<kbd>@RestController</kbd>で単純な文字列を返す<kbd>Hello World</kbd>のコードを教えて」</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="day-section">
+            <div class="day-header">
+                <h2>Day 2 (日): データベースとの接続とデータ投入</h2>
+                <p>ゴール: ContentfulのデータをDBに投入し、APIがDBのデータを返せるようにする。</p>
+            </div>
+             <table class="task-table">
+                <thead>
+                    <tr>
+                        <th class="col-check">Done</th>
+                        <th class="col-task">タスク</th>
+                        <th class="col-artefact">成果物 / キーワード</th>
+                        <th class="col-ref">参考資料</th>
+                        <th class="col-ai">AI活用法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-1"></td>
+                        <td class="task-desc" data-label="タスク"><b>Contentfulデータエクスポート</b>: CLIを使い<kbd>export.json</kbd>を取得</td>
+                        <td data-label="成果物"><kbd>export.json</kbd>ファイル</td>
+                        <td data-label="参考資料">
+                            <a href="https://www.contentful.com/developers/docs/tutorials/cli/import-and-export/" target="_blank" rel="noopener noreferrer"><b>公式</b> contentful-cli</a><br>
+                            <a href="https://zenn.dev/not75743/articles/f3265a6f2b4c19" target="_blank" rel="noopener noreferrer"><b>記事</b> Contentful CLI の基本的な使い方</a>
+                        </td>
+                        <td data-label="AI活用法">「<kbd>contentful-cli</kbd>のインストールとエクスポートコマンドを教えて」</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-2"></td>
+                        <td class="task-desc" data-label="タスク"><b>DB接続設定</b>: <kbd>application.properties</kbd>にDB接続情報を記述</td>
+                        <td data-label="成果物"><kbd>application.properties</kbd></td>
+                        <td data-label="参考資料">
+                            <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.data" target="_blank" rel="noopener noreferrer"><b>公式</b> Data Properties</a><br>
+                            <a href="https://www.sourceallies.com/2021/01/spring-boot-with-postgresql-and-docker-compose-ja/" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot + PostgreSQL 接続設定</a><br>
+                            <a href="https://www.baeldung.com/spring-boot-postgresql" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot with PostgreSQL</a>
+                        </td>
+                        <td data-label="AI活用法">「Spring BootからDockerコンテナのPostgreSQLに接続するJDBC URLの書き方は？」</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-3"></td>
+                        <td class="task-desc" data-label="タスク"><b>EntityとRepository作成</b>: <kbd>Quiz</kbd>エンティティと<kbd>QuizRepository</kbd>を作成</td>
+                        <td data-label="成果物"><kbd>Quiz.java</kbd>, <kbd>QuizRepository.java</kbd></td>
+                        <td data-label="参考資料">
+                             <a href="https://spring.io/projects/spring-data-jpa" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Data JPA</a><br>
+                             <a href="https://qiita.com/k-ta-1/items/b3c25b907106067b844f" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Data JPAでCRUD</a><br>
+                             <a href="https://spring.io/guides/gs/accessing-data-jpa/" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Accessing Data with JPA</a>
+                        </td>
+                        <td data-label="AI活用法">「このJSON構造をJPAの<kbd>@Entity</kbd>にするにはどうすればいい？」</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-4"></td>
+                        <td class="task-desc" data-label="タスク"><b>データ投入</b>: <kbd>CommandLineRunner</kbd>で<kbd>export.json</kbd>を読み込みDBに保存</td>
+                        <td data-label="成果物">DBにデータが入ったPostgreSQL</td>
+                        <td data-label="参考資料">
+                             <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html" target="_blank" rel="noopener noreferrer"><b>公式</b> CommandLineRunner</a><br>
+                             <a href="https://qiita.com/rubytomato@github/items/169653a1e80973a985f4" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot起動時に処理を実行</a><br>
+                             <a href="https://www.baeldung.com/java-read-json-file" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Reading a JSON File in Java</a>
+                        </td>
+                        <td data-label="AI活用法">「JavaでJSONファイルを読み込んで、オブジェクトのリストに変換する方法は？」</td>
+                    </tr>
+                     <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-5"></td>
+                        <td class="task-desc" data-label="タスク"><b>API改修</b>: Controller→Service→Repositoryの構造にし、DBから取得したデータを返す</td>
+                        <td data-label="成果物">DBから取得したJSONを返すAPI</td>
+                        <td data-label="参考資料">
+                             <a href="https://zenn.dev/yoshidaa/articles/ffb8235e16590b" target="_blank" rel="noopener noreferrer"><b>記事</b> 3層アーキテクチャとは</a><br>
+                             <a href="https://www.javaguides.net/2021/08/spring-boot-rest-api-example-tutorial.html" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot REST API Example</a>
+                        </td>
+                        <td data-label="AI活用法">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="day-section">
+            <div class="day-header">
+                <h2>Day 3 (月): 品質保証とドキュメントの自動化</h2>
+                <p>ゴール: バックエンドのロジックをテストし、API仕様書を導入する。</p>
+            </div>
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th class="col-check">Done</th>
+                        <th class="col-task">タスク</th>
+                        <th class="col-artefact">成果物 / キーワード</th>
+                        <th class="col-ref">参考資料</th>
+                        <th class="col-ai">AI活用法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-3-1"></td>
+                        <td class="task-desc" data-label="タスク"><b>Service層のユニットテスト</b>: <kbd>QuizService</kbd>のロジックをJUnit5とMockitoでテスト</td>
+                        <td data-label="成果物"><kbd>QuizServiceTest.java</kbd></td>
+                        <td data-label="参考資料">
+                            <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Boot - Testing</a><br>
+                            <a href="https://zenn.dev/cti/articles/c00561584c4f9b" target="_blank" rel="noopener noreferrer"><b>記事</b> Mockitoでサービスクラスの単体テスト</a><br>
+                            <a href="https://www.baeldung.com/spring-boot-testing" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Testing in Spring Boot</a>
+                        </td>
+                        <td data-label="AI活用法">「<kbd>Mockito</kbd>を使ってRepositoryをモック化し、Serviceをテストするコードの雛形を教えて」</td>
+                    </tr>
+                    <tr class="task-row">
+                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-3-2"></td>
+                        <td class="task-desc" data-label="タスク"><b>Swagger導入</b>: Swagger(springdoc-openapi)を導入し、API仕様書を自動生成</td>
+                        <td data-label="成果物"><kbd>localhost:8080/swagger-ui.html</kbd></td>
+                        <td data-label="参考資料">
+                            <a href="https://springdoc.org/" target="_blank" rel="noopener noreferrer"><b>公式</b> springdoc-openapi</a><br>
+                            <a href="https://qiita.com/k-ta-1/items/4b254e4f20813f890333" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot 3 + Springdoc OpenAPI</a><br>
+                            <a href="https://www.javaguides.net/2021/08/spring-boot-swagger-3-example.html" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Documentation with Swagger</a>
+                        </td>
+                        <td data-label="AI活用法">「Spring Boot 3.xに<kbd>springdoc-openapi</kbd>を導入する<kbd>build.gradle</kbd>の記述と、基本的な設定方法は？」</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <p style="text-align: center; color: var(--secondary-text-color);">... Day 4からDay 7も同様の形式で続きます ...</p>
+
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const STORAGE_KEY = 'sprintTodoListState';
+
+            // 1. Function to load state from localStorage
+            const loadState = () => {
+                const savedState = localStorage.getItem(STORAGE_KEY);
+                if (savedState) {
+                    const parsedState = JSON.parse(savedState);
+                    checkboxes.forEach(checkbox => {
+                        if (parsedState[checkbox.id]) {
+                            checkbox.checked = true;
+                            updateRowStyle(checkbox);
+                        }
+                    });
+                }
+            };
+
+            // 2. Function to save state to localStorage
+            const saveState = () => {
+                const state = {};
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        state[checkbox.id] = true;
+                    }
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            };
+
+            // 3. Function to update row style based on checkbox state
+            const updateRowStyle = (checkbox) => {
+                const row = checkbox.closest('.task-row');
+                if (row) {
+                    if (checkbox.checked) {
+                        row.classList.add('completed');
+                    } else {
+                        row.classList.remove('completed');
+                    }
+                }
+            };
+
+            // 4. Add event listener to each checkbox
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateRowStyle(checkbox);
+                    saveState();
+                });
+            });
+
+            // 5. Initial load
+            loadState();
+        });
+    </script>
+</body>
+</html>
