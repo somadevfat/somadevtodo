@@ -3,477 +3,790 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最終決戦：1週間スプリントToDoリスト</title>
+    <title>【完全版】1週間スプリント＆面接対策ガイド</title>
+    
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
-        /* --- Reset & Base --- */
         :root {
-            --bg-color: #1a1a1d;
-            --card-bg-color: #2c2c34;
-            --primary-text-color: #f0f0f0;
-            --secondary-text-color: #a9a9b3;
-            --accent-color: #4a90e2;
-            --border-color: #44444c;
-            --completed-color: #6a6a72;
-            --header-font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-            --body-font-family: 'Inter', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            --bg-dark: #121212;
+            --bg-medium: #1e1e1e;
+            --bg-light: #2a2a2a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #0d6efd;
+            --accent-green: #198754;
+            --accent-yellow: #ffc107;
+            --accent-red: #dc3545;
+            --border-color: #3a3a3a;
+            --font-body: 'Noto Sans JP', 'Inter', sans-serif;
+            --font-mono: 'Roboto Mono', monospace;
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: var(--body-font-family);
-            background-color: var(--bg-color);
-            color: var(--primary-text-color);
-            line-height: 1.6;
+            font-family: var(--font-body);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.7;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .app-container {
+            display: flex;
+            flex-grow: 1;
+        }
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-medium);
+            border-right: 1px solid var(--border-color);
             padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
         }
-
-        /* --- Layout & Typography --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-family: var(--header-font-family);
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
+        .sidebar-header {
+            padding: 0 1rem 1rem 1rem;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 1rem;
-            color: var(--accent-color);
-            text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
         }
-
-        .day-section {
-            background-color: var(--card-bg-color);
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--accent-yellow);
+        }
+        .sidebar-header p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        .nav-menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .nav-item button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border: none;
+            background-color: transparent;
+            color: var(--text-secondary);
+            text-align: left;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .nav-item button .day-number {
+            font-weight: 700;
+            margin-right: 0.75rem;
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            background-color: var(--bg-light);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+        .nav-item button.active {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .nav-item button:hover:not(.active) {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+        .nav-item button.qa-button {
+            background-color: var(--accent-green);
+            color: white;
+            font-weight: 700;
+        }
+        .nav-item button.qa-button.active {
+            background-color: #146c43;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+        .day-guide h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-yellow);
+        }
+        .day-guide .goal {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--accent-blue);
+        }
+        .task-card {
+            background-color: var(--bg-medium);
             border-radius: 12px;
             margin-bottom: 2.5rem;
-            padding: 1.5rem 2rem;
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease-in-out;
+            overflow: hidden;
         }
-        
-        .day-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .task-header {
+            padding: 1rem 1.5rem;
+            background-color: var(--bg-light);
         }
-
-        .day-header {
+        .task-header h3 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        .task-body {
+            padding: 1.5rem;
+        }
+        .task-section {
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
         }
-
-        .day-header h2 {
-            font-family: var(--header-font-family);
-            font-size: 1.8rem;
-            margin-bottom: 0.25rem;
+        .task-section h4 {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
         }
-
-        .day-header p {
-            color: var(--secondary-text-color);
+        .task-section h4::before {
+            content: '🔹';
+            margin-right: 0.5rem;
             font-size: 1rem;
         }
-
-        /* --- Table Styling --- */
-        .task-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
+        .task-section p, .task-section ul {
+            color: var(--text-secondary);
+            margin-left: 1.5rem;
         }
-
-        .task-table th, .task-table td {
-            padding: 1rem 0.75rem;
-            text-align: left;
-            vertical-align: top;
-            border-bottom: 1px solid var(--border-color);
+        .task-section ul {
+            padding-left: 1.5rem;
         }
-
-        .task-table thead th {
-            color: var(--secondary-text-color);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            border-bottom-width: 2px;
-        }
-        
-        .task-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        /* --- Interactive Elements --- */
-        .task-table td a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.2s ease, text-decoration 0.2s ease;
-        }
-
-        .task-table td a:hover {
-            color: #7bb4f0;
-            text-decoration: underline;
-        }
-        
-        .task-table td a:not(:last-child) {
-            display: inline-block;
-            margin-bottom: 0.5rem;
-        }
-        
-        .task-table td kbd {
-            background-color: var(--bg-color);
-            border-radius: 4px;
-            padding: 0.2em 0.4em;
-            font-family: monospace;
-            font-size: 0.9em;
+        .task-section kbd {
+            background-color: var(--bg-dark);
             border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
         }
-
-        .task-checkbox {
+        .code-block {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            color: #d4d4d4;
+        }
+        .code-block-header {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        .qa-container h2 {
+            font-size: 2.5rem;
+            color: var(--accent-green);
+        }
+        .qa-card {
+            background-color: var(--bg-medium);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .qa-question {
+            padding: 1.25rem 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
             cursor: pointer;
-            width: 1.3em;
-            height: 1.3em;
-            accent-color: var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .qa-question:hover {
+            background-color: var(--bg-light);
+        }
+        .qa-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+        }
+        .qa-answer.visible {
+            padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+            max-height: 1000px;
+            transition: max-height 1s ease-in, padding 0.5s ease-in;
+        }
+        .qa-answer ul {
+            padding-left: 20px;
+            color: var(--text-secondary);
+        }
+        .qa-answer li {
+            margin-bottom: 0.75rem;
+        }
+        .qa-answer .explanation {
+            background-color: rgba(13, 110, 253, 0.05);
+            border-left: 3px solid var(--accent-blue);
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            border-radius: 4px;
         }
 
-        /* --- Completed State --- */
-        .task-row.completed td {
-            color: var(--completed-color);
-            transition: color 0.5s ease;
-        }
-
-        .task-row.completed .task-desc {
-            text-decoration: line-through;
-            text-decoration-color: var(--completed-color);
-        }
-        
-        .task-row.completed td a {
-            color: var(--completed-color);
-            pointer-events: none;
-        }
-
-        /* --- Column Widths --- */
-        .col-check { width: 5%; }
-        .col-task { width: 25%; }
-        .col-artefact { width: 30%; }
-        .col-ref { width: 40%; }
-        /* AI活用法はレスポンシブで非表示にするので幅指定なし */
-
-        /* --- Responsive Design --- */
-        @media (max-width: 992px) {
-            .col-ai {
-                display: none;
-            }
-            .task-table th:nth-child(5) {
-                display: none;
-            }
-            
-            .col-task { width: 30%; }
-            .col-artefact { width: 30%; }
-            .col-ref { width: 35%; }
-        }
-        
         @media (max-width: 768px) {
-            body { padding: 1rem 0.5rem; }
-            h1 { font-size: 2rem; }
-            .day-section { padding: 1rem 1.2rem; }
-            .day-header h2 { font-size: 1.5rem; }
-
-            .task-table { display: block; width: 100%; }
-            .task-table thead { display: none; }
-            .task-table tbody, .task-table tr, .task-table td { display: block; width: 100%; }
-            
-            .task-table tr {
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid var(--border-color);
+            .app-container {
+                flex-direction: column;
             }
-            
-            .task-table tr:last-child {
-                border-bottom: none;
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 1rem 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
             }
-            
-            .task-table td {
-                padding: 0.5rem 0;
-                border: none;
+            .sidebar-header { display: none; }
+            .nav-menu {
                 display: flex;
-                align-items: flex-start;
+                flex-direction: row;
             }
-            
-            .task-table td:before {
-                content: attr(data-label);
-                font-weight: bold;
-                width: 100px;
-                min-width: 100px;
-                color: var(--secondary-text-color);
-                margin-right: 1rem;
+            .nav-item button {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
             }
-
-            .task-table .col-check-td {
-                display: block;
-                padding-bottom: 1rem;
+            .nav-item button .day-number {
+                margin-right: 0;
+                margin-bottom: 0.25rem;
             }
-
-            .task-table .col-check-td:before {
-                display: none;
+            .main-content {
+                padding: 1.5rem;
             }
-
-            .task-checkbox {
-                width: 1.5em;
-                height: 1.5em;
-            }
+            .day-guide h2 { font-size: 2rem; }
         }
-
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div class="container">
-        <h1>最終決戦：1週間スプリントToDoリスト</h1>
+    <script type="text/babel">
+        const sprintData = [
+            // Day 1 Data
+            {
+                day: 1,
+                title: "環境構築とバックエンドの心臓部を作る",
+                goal: "Dockerを使い、自分のPCを汚さずに開発環境を構築。Spring BootでAPIサーバーを立ち上げ、ブラウザから「Hello API」と表示されることを確認する。",
+                tasks: [
+                    {
+                        title: "1. Spring Boot プロジェクト作成",
+                        purpose: "これから開発するWebアプリケーションの「設計図」と「骨格」を作成します。家を建てる前の基礎工事のようなものです。",
+                        steps: [
+                            { text: "**Spring Initializrにアクセス**：[公式 Spring Initializr](https://start.spring.io/) のサイトを開きます。ここは、Spring Bootプロジェクトの雛形を自動で作ってくれる公式サイトです。" },
+                            { text: "**プロジェクト情報を入力**：画面左のフォームに、プロジェクトの基本情報を以下のように入力します。",
+                              list: [
+                                "`Project`: **Gradle - Groovy` （プロジェクトの部品管理方法を指定します）",
+                                "`Language`: **Java`",
+                                "`Spring Boot`: **3.2.x` などの安定版を選びます。",
+                                "`Group`: `com.example`",
+                                "`Artifact`: `quiz-api` （これがプロジェクト名になります）",
+                                "`Packaging`: `Jar`",
+                                "`Java`: `17` （ご自身のPCにインストール済みのJavaバージョンに合わせてください）",
+                              ]
+                            },
+                            { text: "**必要なライブラリを追加 (Dependencies)**：画面右の「**ADD DEPENDENCIES**」ボタンを押し、以下の4つのライブラリを検索して追加します。これらは、プロジェクトに必要な「便利な道具」です。",
+                              list: [
+                                "`Spring Web`: APIを作るための基本機能。",
+                                "`Spring Data JPA`: データベースとのやり取りを楽にしてくれる機能。",
+                                "`Lombok`: 面倒な定型コードを自動で作ってくれる魔法の道具。",
+                                "`PostgreSQL Driver`: JavaアプリがPostgreSQLデータベースと会話するための「通訳者」。",
+                              ]
+                            },
+                            { text: "**プロジェクトを生成＆準備**：画面下の「**GENERATE**」ボタンをクリックすると、`.zip`ファイルがダウンロードされます。ダウンロードした`.zip`ファイルを解凍し、IntelliJ IDEAやVisual Studio Codeなどの開発ツール（IDE）で開いてください。" },
+                        ]
+                    },
+                    {
+                        title: "2. Docker環境構築",
+                        purpose: "自分のPCに直接データベース(PostgreSQL)をインストールするのではなく、「Dockerコンテナ」という仮想的な箱の中で動かします。これにより、誰のPCでも全く同じ環境を簡単に用意でき、PC本体を汚すこともありません。",
+                        steps: [
+                            { text: "**`docker-compose.yml` を作成**：プロジェクトのルートフォルダ（`build.gradle`などがある一番上の階層）に `docker-compose.yml` という名前のファイルを作成し、以下の内容をそのままコピー＆ペーストしてください。これは「PostgreSQLの箱を、こういう設定で用意してください」というDockerへの指示書です。",
+                              code: {
+                                  lang: "yml",
+                                  content: `version: '3.8'
+services:
+  # Spring Boot アプリケーションのサービス
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/quizdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
 
-        <section class="day-section">
-            <div class="day-header">
-                <h2>Day 1 (土): 環境構築とバックエンドの心臓部を作る</h2>
-                <p>ゴール: DockerでSpring BootとPostgreSQLを立ち上げ、APIの骨格を完成させる。</p>
-            </div>
-            <table class="task-table">
-                <thead>
-                    <tr>
-                        <th class="col-check">Done</th>
-                        <th class="col-task">タスク</th>
-                        <th class="col-artefact">成果物 / キーワード</th>
-                        <th class="col-ref">参考資料</th>
-                        <th class="col-ai">AI活用法</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-1"></td>
-                        <td class="task-desc" data-label="タスク"><b>プロジェクト作成</b>: Spring Boot (Web, JPA, Lombok, PostgreSQL Driver)</td>
-                        <td data-label="成果物">Spring Bootプロジェクトフォルダ</td>
-                        <td data-label="参考資料">
-                            <a href="https://start.spring.io/" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Initializr</a><br>
-                            <a href="https://www.bold.ne.jp/engineer-blog/spring-boot-2" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot入門</a><br>
-                            <a href="https://spring.io/guides/gs/spring-boot/" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Building an Application with Spring Boot</a>
-                        </td>
-                        <td data-label="AI活用法">-</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-2"></td>
-                        <td class="task-desc" data-label="タスク"><b>Docker環境構築</b>: <kbd>Dockerfile</kbd>と<kbd>docker-compose.yml</kbd>を作成</td>
-                        <td data-label="成果物"><kbd>Dockerfile</kbd>, <kbd>docker-compose.yml</kbd></td>
-                        <td data-label="参考資料">
-                            <a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="noopener noreferrer"><b>公式</b> Dockerfile reference</a><br>
-                            <a href="https://zenn.dev/kazuki_tam/articles/2ac2696020ce8c" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot + PostgreSQLをDockerで</a><br>
-                            <a href="https://www.baeldung.com/spring-boot-postgresql-docker" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot with PostgreSQL and Docker Compose</a>
-                        </td>
-                        <td data-label="AI活用法">「Spring Boot + PostgreSQLを<kbd>docker-compose</kbd>で動かす最小構成の<kbd>Dockerfile</kbd>と<kbd>yml</kbd>ファイルを教えて」</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-3"></td>
-                        <td class="task-desc" data-label="タスク"><b>コンテナ起動確認</b>: <kbd>docker-compose up</kbd>で両方のコンテナがエラーなく起動する</td>
-                        <td data-label="成果物">起動したDockerコンテナ</td>
-                        <td data-label="参考資料">
-                             <a href="https://docs.docker.com/compose/reference/up/" target="_blank" rel="noopener noreferrer"><b>公式</b> docker-compose up</a><br>
-                             <a href="https://qiita.com/yuta_sasaki/items/934a4d2d4a2754e380bd" target="_blank" rel="noopener noreferrer"><b>記事</b> docker-composeコマンド一覧</a>
-                        </td>
-                        <td data-label="AI活用法">-</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-1-4"></td>
-                        <td class="task-desc" data-label="タスク"><b>API骨格実装</b>: <kbd>QuizController</kbd>に<kbd>GET /api/v1/quizzes</kbd>を作成し、固定の文字列を返す</td>
-                        <td data-label="成果物"><kbd>curl</kbd>で文字列が返ってくるAPI</td>
-                        <td data-label="参考資料">
-                             <a href="https://spring.io/guides/gs/rest-service/" target="_blank" rel="noopener noreferrer"><b>公式</b> Building a RESTful Web Service</a><br>
-                             <a href="https://www.digitalocean.com/community/tutorials/spring-boot-rest-controller-beans-and-components-ja" target="_blank" rel="noopener noreferrer"><b>記事</b> RestControllerでHello World</a><br>
-                             <a href="https://www.baeldung.com/spring-new-requestmapping-shortcuts" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring @RestController Example</a>
-                        </td>
-                        <td data-label="AI活用法">「<kbd>@RestController</kbd>で単純な文字列を返す<kbd>Hello World</kbd>のコードを教えて」</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+  # PostgreSQL データベースのサービス
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=quizdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-        <section class="day-section">
-            <div class="day-header">
-                <h2>Day 2 (日): データベースとの接続とデータ投入</h2>
-                <p>ゴール: ContentfulのデータをDBに投入し、APIがDBのデータを返せるようにする。</p>
-            </div>
-             <table class="task-table">
-                <thead>
-                    <tr>
-                        <th class="col-check">Done</th>
-                        <th class="col-task">タスク</th>
-                        <th class="col-artefact">成果物 / キーワード</th>
-                        <th class="col-ref">参考資料</th>
-                        <th class="col-ai">AI活用法</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-1"></td>
-                        <td class="task-desc" data-label="タスク"><b>Contentfulデータエクスポート</b>: CLIを使い<kbd>export.json</kbd>を取得</td>
-                        <td data-label="成果物"><kbd>export.json</kbd>ファイル</td>
-                        <td data-label="参考資料">
-                            <a href="https://www.contentful.com/developers/docs/tutorials/cli/import-and-export/" target="_blank" rel="noopener noreferrer"><b>公式</b> contentful-cli</a><br>
-                            <a href="https://zenn.dev/not75743/articles/f3265a6f2b4c19" target="_blank" rel="noopener noreferrer"><b>記事</b> Contentful CLI の基本的な使い方</a>
-                        </td>
-                        <td data-label="AI活用法">「<kbd>contentful-cli</kbd>のインストールとエクスポートコマンドを教えて」</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-2"></td>
-                        <td class="task-desc" data-label="タスク"><b>DB接続設定</b>: <kbd>application.properties</kbd>にDB接続情報を記述</td>
-                        <td data-label="成果物"><kbd>application.properties</kbd></td>
-                        <td data-label="参考資料">
-                            <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.data" target="_blank" rel="noopener noreferrer"><b>公式</b> Data Properties</a><br>
-                            <a href="https://www.sourceallies.com/2021/01/spring-boot-with-postgresql-and-docker-compose-ja/" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot + PostgreSQL 接続設定</a><br>
-                            <a href="https://www.baeldung.com/spring-boot-postgresql" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot with PostgreSQL</a>
-                        </td>
-                        <td data-label="AI活用法">「Spring BootからDockerコンテナのPostgreSQLに接続するJDBC URLの書き方は？」</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-3"></td>
-                        <td class="task-desc" data-label="タスク"><b>EntityとRepository作成</b>: <kbd>Quiz</kbd>エンティティと<kbd>QuizRepository</kbd>を作成</td>
-                        <td data-label="成果物"><kbd>Quiz.java</kbd>, <kbd>QuizRepository.java</kbd></td>
-                        <td data-label="参考資料">
-                             <a href="https://spring.io/projects/spring-data-jpa" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Data JPA</a><br>
-                             <a href="https://qiita.com/k-ta-1/items/b3c25b907106067b844f" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Data JPAでCRUD</a><br>
-                             <a href="https://spring.io/guides/gs/accessing-data-jpa/" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Accessing Data with JPA</a>
-                        </td>
-                        <td data-label="AI活用法">「このJSON構造をJPAの<kbd>@Entity</kbd>にするにはどうすればいい？」</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-4"></td>
-                        <td class="task-desc" data-label="タスク"><b>データ投入</b>: <kbd>CommandLineRunner</kbd>で<kbd>export.json</kbd>を読み込みDBに保存</td>
-                        <td data-label="成果物">DBにデータが入ったPostgreSQL</td>
-                        <td data-label="参考資料">
-                             <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html" target="_blank" rel="noopener noreferrer"><b>公式</b> CommandLineRunner</a><br>
-                             <a href="https://qiita.com/rubytomato@github/items/169653a1e80973a985f4" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot起動時に処理を実行</a><br>
-                             <a href="https://www.baeldung.com/java-read-json-file" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Reading a JSON File in Java</a>
-                        </td>
-                        <td data-label="AI活用法">「JavaでJSONファイルを読み込んで、オブジェクトのリストに変換する方法は？」</td>
-                    </tr>
-                     <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-2-5"></td>
-                        <td class="task-desc" data-label="タスク"><b>API改修</b>: Controller→Service→Repositoryの構造にし、DBから取得したデータを返す</td>
-                        <td data-label="成果物">DBから取得したJSONを返すAPI</td>
-                        <td data-label="参考資料">
-                             <a href="https://zenn.dev/yoshidaa/articles/ffb8235e16590b" target="_blank" rel="noopener noreferrer"><b>記事</b> 3層アーキテクチャとは</a><br>
-                             <a href="https://www.javaguides.net/2021/08/spring-boot-rest-api-example-tutorial.html" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Spring Boot REST API Example</a>
-                        </td>
-                        <td data-label="AI活用法">-</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+volumes:
+  postgres_data:`
+                              }
+                            },
+                            { text: "**`Dockerfile` を作成**：同じくプロジェクトのルートフォルダに `Dockerfile` という名前のファイルを作成し、以下の内容をコピー＆ペーストしてください。これは「Spring Bootアプリをどうやって起動させるか」の具体的な手順を示した指示書です。",
+                              code: {
+                                  lang: "dockerfile",
+                                  content: `FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
+COPY . .
+# 実行権限を付与
+RUN chmod +x ./gradlew
+RUN ./gradlew build
+CMD ["java", "-jar", "build/libs/quiz-api-0.0.1-SNAPSHOT.jar"]`
+                              }
+                            },
+                        ]
+                    },
+                    {
+                        title: "3. コンテナ起動確認",
+                        purpose: "作成した2つの指示書（`Dockerfile`, `docker-compose.yml`）が正しく書けているか、実際にDockerを動かして確認します。",
+                        steps: [
+                            { text: "**ターミナルを開く**：IDEに内蔵されているターミナル、またはPCのターミナル（コマンドプロンプト）を開き、`cd` コマンドで、プロジェクトのルートフォルダに移動していることを確認してください。" },
+                            { text: "**コンテナを起動**：以下のコマンドを実行します。これにより、Dockerは2つの指示書を読み込み、アプリとDBのコンテナ（箱）を作成し、起動します。",
+                              code: {
+                                  lang: "bash",
+                                  content: "docker-compose up --build"
+                              }
+                            }
+                        ],
+                        verification: "ログがたくさん流れますが、`db_1`と`app_1`の両方のログが表示され、エラーで停止しなければ成功です。初回のビルドには数分かかることがあります。"
+                    },
+                    {
+                        title: "4. API骨格実装",
+                        purpose: "アプリの魂であるAPI（サーバーとの通信窓口）の、ごく簡単なものを作成します。まずは「リクエストが来たら、固定の文字列を返す」だけのAPIを作り、サーバーが正しく動いていることを証明します。",
+                        steps: [
+                            { text: "**`QuizController.java` を作成**：IDEのファイルツリーで `src/main/java/com/example/quizapi` の中に、`QuizController.java` という名前のJavaファイルを作成します。",
+                              code: {
+                                  lang: "java",
+                                  content: `package com.example.quizapi;
 
-        <section class="day-section">
-            <div class="day-header">
-                <h2>Day 3 (月): 品質保証とドキュメントの自動化</h2>
-                <p>ゴール: バックエンドのロジックをテストし、API仕様書を導入する。</p>
-            </div>
-            <table class="task-table">
-                <thead>
-                    <tr>
-                        <th class="col-check">Done</th>
-                        <th class="col-task">タスク</th>
-                        <th class="col-artefact">成果物 / キーワード</th>
-                        <th class="col-ref">参考資料</th>
-                        <th class="col-ai">AI活用法</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-3-1"></td>
-                        <td class="task-desc" data-label="タスク"><b>Service層のユニットテスト</b>: <kbd>QuizService</kbd>のロジックをJUnit5とMockitoでテスト</td>
-                        <td data-label="成果物"><kbd>QuizServiceTest.java</kbd></td>
-                        <td data-label="参考資料">
-                            <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing" target="_blank" rel="noopener noreferrer"><b>公式</b> Spring Boot - Testing</a><br>
-                            <a href="https://zenn.dev/cti/articles/c00561584c4f9b" target="_blank" rel="noopener noreferrer"><b>記事</b> Mockitoでサービスクラスの単体テスト</a><br>
-                            <a href="https://www.baeldung.com/spring-boot-testing" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Testing in Spring Boot</a>
-                        </td>
-                        <td data-label="AI活用法">「<kbd>Mockito</kbd>を使ってRepositoryをモック化し、Serviceをテストするコードの雛形を教えて」</td>
-                    </tr>
-                    <tr class="task-row">
-                        <td class="col-check-td" data-label="Done"><input type="checkbox" class="task-checkbox" id="task-3-2"></td>
-                        <td class="task-desc" data-label="タスク"><b>Swagger導入</b>: Swagger(springdoc-openapi)を導入し、API仕様書を自動生成</td>
-                        <td data-label="成果物"><kbd>localhost:8080/swagger-ui.html</kbd></td>
-                        <td data-label="参考資料">
-                            <a href="https://springdoc.org/" target="_blank" rel="noopener noreferrer"><b>公式</b> springdoc-openapi</a><br>
-                            <a href="https://qiita.com/k-ta-1/items/4b254e4f20813f890333" target="_blank" rel="noopener noreferrer"><b>記事</b> Spring Boot 3 + Springdoc OpenAPI</a><br>
-                            <a href="https://www.javaguides.net/2021/08/spring-boot-swagger-3-example.html" target="_blank" rel="noopener noreferrer"><b>サンプル</b> Documentation with Swagger</a>
-                        </td>
-                        <td data-label="AI活用法">「Spring Boot 3.xに<kbd>springdoc-openapi</kbd>を導入する<kbd>build.gradle</kbd>の記述と、基本的な設定方法は？」</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/quizzes")
+public class QuizController {
+
+    @GetMapping
+    public String getQuizzes() {
+        // まずは固定の文字列を返すだけのシンプルなAPI
+        return "Hello API";
+    }
+}`
+                              }
+                            }
+                        ],
+                        verification: "前のタスクで `docker-compose up` を実行したままであれば、SpringのDevToolsが変更を検知してアプリを自動で再起動します。もし止めていたら、再度 `docker-compose up` を実行してください。Webブラウザを開き、アドレスバーに `http://localhost:8080/api/v1/quizzes` と入力してエンターキーを押します。画面に **`Hello API`** と表示されれば、Day 1のゴール達成です！"
+                    }
+                ]
+            },
+            // Day 2 Data ... (and so on for all 7 days)
+            {
+                day: 2,
+                title: "データベースとの接続とデータ投入",
+                goal: "Contentfulからエクスポートしたクイズデータを、Docker上のPostgreSQLに投入し、APIがそのデータを返せるようにする。",
+                tasks: [
+                    {
+                        title: "1. Contentfulデータエクスポート",
+                        purpose: "このプロジェクトの元データとなるクイズの問題を、CMS（Contentful）からJSON形式で取得します。",
+                        steps: [
+                            {text: "今回は模擬的に、以下のような `export.json` ファイルが手に入ったと仮定します。この内容をコピーし、プロジェクトの `src/main/resources` フォルダ直下に `export.json` という名前で保存してください。", code: { lang: "json", content: `
+{
+  "quizzes": [
+    { "question": "日本の首都は？", "answer": "東京" },
+    { "question": "Javaを開発した企業は？", "answer": "Sun Microsystems" },
+    { "question": "HTTPのデフォルトポート番号は？", "answer": "80" }
+  ]
+}`}},
+                        ],
+                        verification: "`src/main/resources/export.json` ファイルが存在し、中身が正しくコピーされていることを確認します。"
+                    },
+                    {
+                        title: "2. DB接続設定",
+                        purpose: "Spring Bootアプリケーションに、接続先のデータベースの場所（URL）と認証情報（ユーザー名、パスワード）を教えます。",
+                        steps: [
+                           {text: "`src/main/resources/application.properties` ファイルを開き、以下の設定を追記します。`docker-compose.yml`で設定した情報と一致していることが重要です。", code: {lang: "properties", content: `
+# PostgreSQL Database Connection
+spring.datasource.url=jdbc:postgresql://db:5432/quizdb
+spring.datasource.username=user
+spring.datasource.password=password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA/Hibernate settings
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true`
+                           }},
+                           {text: "【解説】 `ddl-auto=update`は、JavaのEntityクラス（後で作成）を元に、データベースのテーブル構造を自動で更新してくれる便利な設定です。"}
+                        ]
+                    },
+                    {
+                        title: "3. EntityとRepository作成",
+                        purpose: "データベースのテーブル構造をJavaのクラス（Entity）として定義し、そのデータを操作するための窓口（Repository）を作成します。",
+                        steps: [
+                            {text: "**Entity作成**: `com.example.quizapi` パッケージに `Quiz.java` を作成します。", code: {lang: "java", content: `
+package com.example.quizapi;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+@Data
+@Entity
+public class Quiz {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String question;
+    private String answer;
+}`
+                            }},
+                            {text: "**Repository作成**: 同じく `com.example.quizapi` パッケージに `QuizRepository.java` を作成します。", code: {lang: "java", content: `
+package com.example.quizapi;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface QuizRepository extends JpaRepository<Quiz, Long> {
+}`
+                            }}
+                        ],
+                        verification: "この時点ではファイルを作成するだけです。コンパイルエラーが出ていないことを確認してください。"
+                    },
+                    {
+                        title: "4. データ投入処理の実装",
+                        purpose: "アプリケーション起動時に一度だけ、`export.json` ファイルを読み込み、中のクイズデータをデータベースに保存する処理を実装します。",
+                        steps: [
+                            {text: "`com.example.quizapi` パッケージに `DataSeeder.java` を作成します。", code: {lang:"java", content: `
+package com.example.quizapi;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+@Component
+public class DataSeeder implements CommandLineRunner {
+
+    private final QuizRepository quizRepository;
+    private final ObjectMapper objectMapper;
+
+    public DataSeeder(QuizRepository quizRepository, ObjectMapper objectMapper) {
+        this.quizRepository = quizRepository;
+        this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (quizRepository.count() == 0) {
+            InputStream inputStream = TypeReference.class.getResourceAsStream("/export.json");
+            Map<String, List<Quiz>> data = objectMapper.readValue(inputStream, new TypeReference<>() {});
+            quizRepository.saveAll(data.get("quizzes"));
+            System.out.println("クイズデータを投入しました。");
+        }
+    }
+}`}}
+                        ],
+                        verification: "`docker-compose up`でアプリを起動し直した際、ログに「クイズデータを投入しました。」と表示されれば成功です。"
+                    },
+                    {
+                        title: "5. API改修",
+                        purpose: "Day 1で作った「Hello API」を、実際にデータベースからクイズ情報を取得して返す、本物のAPIに進化させます。そのために、処理を役割ごとに分離する「3層アーキテクチャ」を導入します。",
+                        steps: [
+                            {text: "**Service層の作成**: `com.example.quizapi` パッケージに `QuizService.java` を作成します。ビジネスロジック（この場合はクイズを取得する処理）を担当します。", code: {lang: "java", content: `
+package com.example.quizapi;
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class QuizService {
+
+    private final QuizRepository quizRepository;
+
+    public QuizService(QuizRepository quizRepository) {
+        this.quizRepository = quizRepository;
+    }
+
+    public List<Quiz> getAllQuizzes() {
+        return quizRepository.findAll();
+    }
+}`}},
+                            {text: "**Controller層の修正**: `QuizController.java` を修正し、Serviceを呼び出すように変更します。", code: {lang: "java", content: `
+package com.example.quizapi;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/quizzes")
+public class QuizController {
+
+    private final QuizService quizService;
+
+    public QuizController(QuizService quizService) {
+        this.quizService = quizService;
+    }
+
+    @GetMapping
+    public List<Quiz> getQuizzes() {
+        return quizService.getAllQuizzes();
+    }
+}`}}
+                        ],
+                        verification: "ブラウザで再度 `http://localhost:8080/api/v1/quizzes` にアクセスします。`export.json` に記述したクイズデータがJSON形式で表示されれば、Day 2のゴール達成です！"
+                    }
+                ]
+            },
+            // Dummy data for other days to show structure
+            { day: 3, title: "品質保証とドキュメントの自動化", goal: "...", tasks: [] },
+            { day: 4, title: "バックエンドの公開とCIの導入", goal: "...", tasks: [] },
+            { day: 5, title: "Androidとバックエンドの接続", goal: "...", tasks: [] },
+            { day: 6, title: "ドキュメント作成", goal: "...", tasks: [] },
+            { day: 7, title: "最終調整とアウトプット準備", goal: "...", tasks: [] },
+        ];
         
-        <p style="text-align: center; color: var(--secondary-text-color);">... Day 4からDay 7も同様の形式で続きます ...</p>
-
-
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const checkboxes = document.querySelectorAll('.task-checkbox');
-            const STORAGE_KEY = 'sprintTodoListState';
-
-            // 1. Function to load state from localStorage
-            const loadState = () => {
-                const savedState = localStorage.getItem(STORAGE_KEY);
-                if (savedState) {
-                    const parsedState = JSON.parse(savedState);
-                    checkboxes.forEach(checkbox => {
-                        if (parsedState[checkbox.id]) {
-                            checkbox.checked = true;
-                            updateRowStyle(checkbox);
-                        }
-                    });
-                }
-            };
-
-            // 2. Function to save state to localStorage
-            const saveState = () => {
-                const state = {};
-                checkboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        state[checkbox.id] = true;
+        const interviewData = [
+            {
+                category: "Spring Boot & Java",
+                questions: [
+                    {
+                        q: "なぜこのプロジェクトでSpring Bootを選んだのですか？",
+                        a: "はい、Spring Bootを選んだ理由は主に3点あります。第一に、**迅速な開発が可能**な点です。面倒な設定がほとんど不要で、すぐにAPI開発に着手できます。第二に、**エコシステムが非常に豊富**である点です。データベース接続(JPA)やセキュリティなど、必要な機能がライブラリを追加するだけで簡単に導入できます。第三に、Javaは堅牢で大規模開発にも向いており、バックエンドエンジニアとしての**汎用的なスキルが身につく**と考えたためです。"
+                    },
+                    {
+                        q: "`@RestController`と`@Controller`の違いは何ですか？",
+                        a: "`@Controller`は、主に画面遷移を伴う従来のWebアプリケーションで使われ、View（HTMLなど）を返すのが目的です。一方、`@RestController`は`@Controller`と`@ResponseBody`を組み合わせたもので、主にJSONやXMLなどのデータ自体を返すRESTful APIを作成する際に使用します。今回のプロジェクトでは、Androidアプリにデータを提供するAPIを開発するため、`@RestController`を使用しました。"
+                    },
+                    {
+                        q: "依存性の注入（DI）とは何か、なぜ便利なのか説明してください。",
+                        a: "依存性の注入（DI）とは、あるクラスが必要とする別のクラスのインスタンス（オブジェクト）を、そのクラス自身が生成するのではなく、外部（DIコンテナ）から与えてもらう（注入してもらう）設計パターンのことです。これが便利な理由は、**クラス間の結合度を下げられる**点です。例えば、テストの際に本物のデータベース接続クラスの代わりに、偽のテスト用クラスを簡単に注入できます。これにより、**テストが容易になり、コードの再利用性やメンテナンス性も向上**します。"
+                    },
+                    {
+                        q: "JPAとは何ですか？ なぜ生のSQL(JDBC)ではなくJPAを使うのですか？",
+                        a: "JPA (Java Persistence API) は、Javaのオブジェクトとデータベースのテーブルを自動的にマッピング（対応付け）してくれる**ORM（Object-Relational Mapping）技術の仕様**です。生のSQLではなくJPAを使うメリットは、**データベースの種類に依存しないコードが書ける**ことと、**生産性の向上**です。例えば、開発中はPostgreSQL、本番ではMySQLといった切り替えが容易になります。また、SQLを直接書く手間が省け、Javaのオブジェクトを操作する感覚でデータベースを扱えるため、開発効率が大幅に向上します。"
                     }
-                });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            };
-
-            // 3. Function to update row style based on checkbox state
-            const updateRowStyle = (checkbox) => {
-                const row = checkbox.closest('.task-row');
-                if (row) {
-                    if (checkbox.checked) {
-                        row.classList.add('completed');
-                    } else {
-                        row.classList.remove('completed');
+                ]
+            },
+            {
+                category: "Docker",
+                questions: [
+                    {
+                        q: "なぜ開発環境にDockerを使ったのですか？",
+                        a: "はい、Dockerを利用した理由は、**環境のポータビリティ（可搬性）と再現性を高める**ためです。`Dockerfile`と`docker-compose.yml`という設定ファイルさえあれば、私のPCでも、他の開発者のPCでも、あるいは本番サーバーでも、全く同じ環境を数コマンドで構築できます。これにより「自分のPCでは動いたのに…」という典型的な問題を未然に防ぎ、**環境構築の手間を大幅に削減**できるという大きなメリットがあります。"
+                    },
+                    {
+                        q: "`Dockerfile`と`docker-compose.yml`の役割の違いを教えてください。",
+                        a: "`Dockerfile`は、**単一のコンテナ（アプリケーション）をどうやって作るか**を定義する「設計図」です。例えば、どのOSを土台にし、どのファイルをコピーし、どのコマンドでアプリを起動するか、といった手順を記述します。一方、`docker-compose.yml`は、**複数のコンテナを連携させて、アプリケーション全体をどう動かすか**を定義する「指揮書」です。今回のプロジェクトのように、Webアプリケーション（`app`）コンテナとデータベース（`db`）コンテナを同時に起動し、それらを連携させるために使用します。"
                     }
+                ]
+            },
+            {
+                category: "Web & Architecture",
+                questions: [
+                    {
+                        q: "Controller-Service-Repositoryという3層アーキテクチャの各層の役割は何ですか？",
+                        a: "はい、これは関心の分離を目的とした設計パターンです。**Controller層**は、外部からのリクエストを受け付け、レスポンスを返す「受付係」です。パラメータのチェックなどを行いますが、複雑な処理は行いません。**Service層**は、アプリケーションのビジネスロジック、つまり「頭脳」を担当します。Controllerから受け取った指示に基づき、複数の処理を組み合わせて、アプリケーションの核となる機能を実行します。**Repository層**は、データベースとのやり取りを専門に行う「データ倉庫係」です。Service層の依頼を受けて、データの保存、取得、更新、削除といった操作のみを担当します。このように役割を分けることで、コードの見通しが良くなり、変更やテストがしやすくなります。"
+                    }
+                ]
+            }
+        ];
+
+        function App() {
+            const [view, setView] = React.useState({ type: 'day', index: 0 });
+
+            const renderContent = () => {
+                if (view.type === 'day') {
+                    const dayData = sprintData.find(d => d.day === view.index + 1);
+                    return <DayGuide data={dayData} />;
                 }
+                if (view.type === 'qa') {
+                    return <InterviewQA />;
+                }
+                return null;
             };
 
-            // 4. Add event listener to each checkbox
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    updateRowStyle(checkbox);
-                    saveState();
-                });
-            });
+            return (
+                <div className="app-container">
+                    <Sidebar currentView={view} setView={setView} />
+                    <main className="main-content">
+                        {renderContent()}
+                    </main>
+                </div>
+            );
+        }
+        
+        function Sidebar({ currentView, setView }) {
+            return (
+                <aside className="sidebar">
+                    <div className="sidebar-header">
+                        <h1>完全学習ガイド</h1>
+                        <p>1 Week Sprint & Interview Prep</p>
+                    </div>
+                    <ul className="nav-menu">
+                        {sprintData.map((day, index) => (
+                            <li className="nav-item" key={day.day}>
+                                <button
+                                    className={currentView.type === 'day' && currentView.index === index ? 'active' : ''}
+                                    onClick={() => setView({ type: 'day', index })}
+                                >
+                                    <span className="day-number">DAY {day.day}</span>
+                                    {day.title}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="nav-item">
+                        <button 
+                            className={`qa-button ${currentView.type === 'qa' ? 'active' : ''}`}
+                            onClick={() => setView({ type: 'qa' })}
+                        >
+                           💡 面接想定問答集
+                        </button>
+                    </div>
+                </aside>
+            );
+        }
+        
+        function DayGuide({ data }) {
+            if (!data) return <div>データがありません。</div>;
+            return (
+                <div className="day-guide">
+                    <h2>Day {data.day}: {data.title}</h2>
+                    <p className="goal">{data.goal}</p>
+                    {data.tasks.map((task, index) => (
+                        <TaskCard key={index} task={task} />
+                    ))}
+                </div>
+            );
+        }
 
-            // 5. Initial load
-            loadState();
-        });
+        function TaskCard({ task }) {
+            return (
+                <div className="task-card">
+                    <div className="task-header">
+                        <h3>{task.title}</h3>
+                    </div>
+                    <div className="task-body">
+                        {task.purpose && (
+                            <div className="task-section">
+                                <h4>目的</h4>
+                                <p>{task.purpose}</p>
+                            </div>
+                        )}
+                        {task.steps && (
+                             <div className="task-section">
+                                <h4>ステップ</h4>
+                                {task.steps.map((step, index) => (
+                                    <div key={index} style={{marginBottom: '1rem'}}>
+                                        <p dangerouslySetInnerHTML={{ __html: step.text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>').replace(/`([^`]+)`/g, '<kbd>$1</kbd>') }} />
+                                        {step.list && (
+                                            <ul>
+                                                {step.list.map((item, i) => <li key={i} dangerouslySetInnerHTML={{ __html: item.replace(/`([^`]+)`/g, '<kbd>$1</kbd>') }} />)}
+                                            </ul>
+                                        )}
+                                        {step.code && <CodeBlock lang={step.code.lang} content={step.code.content} />}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {task.verification && (
+                            <div className="task-section">
+                                <h4>✔️ 確認方法</h4>
+                                <p>{task.verification}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+        
+        function CodeBlock({ lang, content }) {
+            return (
+                <div className="code-block">
+                    <div className="code-block-header">{lang}</div>
+                    <pre><code>{content}</code></pre>
+                </div>
+            )
+        }
+
+        function InterviewQA() {
+            const [openIndex, setOpenIndex] = React.useState(null);
+
+            const toggleAnswer = (index) => {
+                setOpenIndex(openIndex === index ? null : index);
+            };
+
+            return (
+                <div className="qa-container">
+                    <h2>💡 面接想定問答集</h2>
+                    <p className="goal">このプロジェクトを通して得た知識を、面接官に的確に伝えるための準備をしましょう。質問をクリックすると、回答のポイントが表示されます。</p>
+                    {interviewData.map((category, catIndex) => (
+                        <div key={catIndex}>
+                            <h3 style={{fontSize: "1.8rem", color: "var(--text-secondary)", marginTop: "2rem"}}>{category.category}</h3>
+                            {category.questions.map((item, qIndex) => {
+                                const globalIndex = `${catIndex}-${qIndex}`;
+                                return (
+                                    <div className="qa-card" key={globalIndex}>
+                                        <div className="qa-question" onClick={() => toggleAnswer(globalIndex)}>
+                                            <span>{item.q}</span>
+                                            <span>{openIndex === globalIndex ? '➖' : '➕'}</span>
+                                        </div>
+                                        <div className={`qa-answer ${openIndex === globalIndex ? 'visible' : ''}`}>
+                                            <div>
+                                                <p style={{color: "var(--accent-green)", fontWeight: "bold"}}>回答のポイント：</p>
+                                                <div className="explanation" dangerouslySetInnerHTML={{ __html: item.a.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>
